@@ -231,3 +231,14 @@ class Client(httpx.Client):
             self.login_data = None
             self._alt_svc_cache = []
             self.login_url = None
+
+    def migrate_on_different_edge(self, migration_url: str):
+        edge_node_list = ["edge1", "edge2", "edge3"]
+        if len(self._alt_svc_cache)==0:
+            print("No migration made, unknown edge")
+            return
+
+        node_to_migrate = [x for x in edge_node_list if x != self._alt_svc_cache[0]["value"].split(".")[0]]
+        migration_data = {"edgeNodeList": node_to_migrate}
+        r = self.post(migration_url, json=migration_data)
+
