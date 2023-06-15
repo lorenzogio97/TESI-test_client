@@ -1,25 +1,7 @@
 import time
-import socket
-
 import httpx
-
 import edge_http
 
-"""
-workaround to get resolved IP by DNS : https://stackoverflow.com/questions/44374215/how-do-i-specify-url-resolution-in-pythons-requests-library-in-a-similar-fashio
-"""
-prv_getaddrinfo = socket.getaddrinfo
-
-
-def new_getaddrinfo(*args):
-    # Uncomment to see what calls to `getaddrinfo` look like.
-    # print(args)
-    addr = prv_getaddrinfo(*args)
-    print(addr)
-    return addr
-
-
-socket.getaddrinfo = new_getaddrinfo
 
 limits = httpx.Limits(max_keepalive_connections=None, max_connections=None, keepalive_expiry=None)
 s = edge_http.Client("https://compute.lorenzogiorgi.com/orchestrator/login", "lorenzo", "lorenzo", verify=True,

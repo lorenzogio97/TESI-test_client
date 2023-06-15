@@ -1,6 +1,7 @@
 import time
 import typing
 import httpx
+import socket
 import json
 from httpx._types import (
     AsyncByteStream,
@@ -22,6 +23,18 @@ from httpx._types import (
 
 from httpx._client import UseClientDefault, USE_CLIENT_DEFAULT
 
+"""
+workaround to get resolved IP by DNS : https://stackoverflow.com/questions/44374215/how-do-i-specify-url-resolution-in-pythons-requests-library-in-a-similar-fashio
+"""
+prv_getaddrinfo = socket.getaddrinfo
+def new_getaddrinfo(*args):
+    # Uncomment to see what calls to `getaddrinfo` look like.
+    # print(args)
+    addr = prv_getaddrinfo(*args)
+    print(addr)
+    return addr
+
+socket.getaddrinfo = new_getaddrinfo
 
 class Client(httpx.Client):
     def __init__(self, auth_url: str, username: str, password: str, **kwargs):
