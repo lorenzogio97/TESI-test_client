@@ -1,3 +1,4 @@
+import random
 import time
 import typing
 import httpx
@@ -27,6 +28,8 @@ from httpx._client import UseClientDefault, USE_CLIENT_DEFAULT
 workaround to get resolved IP by DNS : https://stackoverflow.com/questions/44374215/how-do-i-specify-url-resolution-in-pythons-requests-library-in-a-similar-fashio
 """
 prv_getaddrinfo = socket.getaddrinfo
+
+
 def new_getaddrinfo(*args):
     # Uncomment to see what calls to `getaddrinfo` look like.
     # print(args)
@@ -34,7 +37,9 @@ def new_getaddrinfo(*args):
     print(addr)
     return addr
 
+
 socket.getaddrinfo = new_getaddrinfo
+
 
 class Client(httpx.Client):
     def __init__(self, auth_url: str, username: str, password: str, **kwargs):
@@ -151,7 +156,6 @@ class Client(httpx.Client):
             )
         return response
 
-
     def __use_altsvc_cache(self, url: httpx.URL, headers: httpx.Headers):
         # print(self._alt_svc_cache)
         url = self._merge_url(url)
@@ -247,11 +251,11 @@ class Client(httpx.Client):
 
     def migrate_on_different_edge(self, migration_url: str):
         edge_node_list = ["edge1", "edge2", "edge3"]
-        if len(self._alt_svc_cache)==0:
+        if len(self._alt_svc_cache) == 0:
             print("No migration made, unknown edge")
             return
 
         node_to_migrate = [x for x in edge_node_list if x != self._alt_svc_cache[0]["value"].split(".")[0]]
+        random.shuffle(node_to_migrate)
         migration_data = {"edgeNodeList": node_to_migrate}
-        r = self.post(migration_url, json=migration_data)
-
+        r = self.post(migration_url + self.login_data["username"], json=migration_data)
