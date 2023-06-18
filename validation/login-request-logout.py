@@ -1,6 +1,10 @@
+import os
+import sys
 import time
-import edge_http
 import httpx
+
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+import edge_http
 
 
 
@@ -13,7 +17,7 @@ for i in range(1, 10):
     print()
     print("Request #" + str(i))
     t0 = time.time_ns()
-    # r = s.get("https://google.com")
+
     r = s.get("/echo/echo")
     print(r.http_version)
 
@@ -21,7 +25,8 @@ for i in range(1, 10):
 
     t1 = time.time_ns()
     print("Time used (ms)", (t1 - t0) / 1000000)
-    time.sleep(20)
+    time.sleep(1)
+
 
 s.logout("/orchestrator/logout")
 s.close()

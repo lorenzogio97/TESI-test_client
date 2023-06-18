@@ -1,7 +1,10 @@
+import os
+import sys
 import time
 import httpx
-import edge_http
 
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+import edge_http
 
 limits = httpx.Limits(max_keepalive_connections=None, max_connections=None, keepalive_expiry=None)
 s = edge_http.Client("https://compute.lorenzogiorgi.com/orchestrator/login", "lorenzo", "lorenzo", verify=True,
@@ -20,10 +23,10 @@ for i in range(1, 10):
 
     t1 = time.time_ns()
     print("Time used (ms)", (t1 - t0) / 1000000)
-    time.sleep(1)
+    time.sleep(0.1)
 
-#trigger migration
-s.migrate_on_different_edge("https://orchestrator.lorenzogiorgi.com/migrate/lorenzo")
+# trigger migration
+s.migrate_on_different_edge("https://orchestrator.lorenzogiorgi.com/migrate/")
 
 for i in range(1, 10):
     print()
@@ -38,8 +41,7 @@ for i in range(1, 10):
 
     t1 = time.time_ns()
     print("Time used (ms)", (t1 - t0) / 1000000)
-    time.sleep(1)
-
+    time.sleep(0.1)
 
 s.logout("/orchestrator/logout")
 s.close()
