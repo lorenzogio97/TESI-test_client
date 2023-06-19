@@ -1,7 +1,7 @@
 import os
 import sys
 import time
-
+import pandas as pd
 import httpx
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
@@ -20,7 +20,7 @@ Total experiment duration: 90 minutes
 
 
 def make_request(quantity: int, interval: float):
-    global request_no
+    global request_no, request_time_series
     for _ in range(quantity):
         print()
         print()
@@ -37,12 +37,14 @@ def make_request(quantity: int, interval: float):
         print("Time used (ms)", (t1 - t0) / 1000000)
         print(r.elapsed.total_seconds())
         request_no = request_no + 1
-        time.sleep(1)
+        request_time_series.append((t1 - t0) / 1000000)
+        time.sleep(interval)
 
 
 # request number counter
 request_no = 0
 # service time
+request_time_series = []
 
 # client setup
 limits = httpx.Limits(max_keepalive_connections=None, max_connections=None, keepalive_expiry=None)
@@ -65,3 +67,7 @@ for i in range(9):
 
     # trigger migration
     s.migrate_on_different_edge("https://orchestrator.lorenzogiorgi.com/migrate/")
+
+# collecting and saving result
+series = pd.Series(request_time_series)
+series.to_csv("single_client-long_run.csv")
