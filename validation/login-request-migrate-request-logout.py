@@ -15,7 +15,6 @@ for i in range(1, 10):
     print()
     print("Request #" + str(i))
     t0 = time.time_ns()
-    # r = s.get("https://google.com")
     r = s.get("/echo/echo")
     print(r.http_version)
 
