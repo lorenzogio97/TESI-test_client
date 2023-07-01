@@ -28,16 +28,12 @@ from httpx._client import UseClientDefault, USE_CLIENT_DEFAULT
 workaround to get resolved IP by DNS : https://stackoverflow.com/questions/44374215/how-do-i-specify-url-resolution-in-pythons-requests-library-in-a-similar-fashio
 """
 prv_getaddrinfo = socket.getaddrinfo
-
-
 def new_getaddrinfo(*args):
     # Uncomment to see what calls to `getaddrinfo` look like.
     # print(args)
     addr = prv_getaddrinfo(*args)
     print(addr)
     return addr
-
-
 socket.getaddrinfo = new_getaddrinfo
 
 
@@ -257,5 +253,17 @@ class Client(httpx.Client):
 
         node_to_migrate = [x for x in edge_node_list if x != self._alt_svc_cache[0]["value"].split(".")[0]]
         random.shuffle(node_to_migrate)
-        migration_data = {"edgeNodeList": node_to_migrate}
-        r = self.post(migration_url + self.login_data["username"], json=migration_data)
+        migration_data = {"edgeNodeList": node_to_migrate, "username": self.login_data["username"]}
+        r = self.post(migration_url, json=migration_data)
+
+    def get_current_edge(self):
+        if len(self._alt_svc_cache) == 0:
+            print("No migration made, unknown edge")
+            return "cloud"
+
+        current_edge = self._alt_svc_cache[0]["value"].split(".")[0]
+
+        return current_edge
+
+    def get_username(self):
+        return self.login_data["username"]
