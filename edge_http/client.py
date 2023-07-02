@@ -38,18 +38,19 @@ socket.getaddrinfo = new_getaddrinfo
 
 
 class Client(httpx.Client):
-    def __init__(self, auth_url: str, username: str, password: str, **kwargs):
+    def __init__(self, auth_url: str, username: str, password: str, alt_svc_support: bool, **kwargs):
         super().__init__(**kwargs)
         self._alt_svc_cache: typing.List[dict] = []
         self.login_data = {"username": username, "password": password}
         self.login_url = auth_url
+        self.alt_svc_support = alt_svc_support
 
         # make login request
         r = self.post(auth_url, json=self.login_data)
         response = json.loads(r.content.decode("utf-8"))
 
-        domain = response["domainName"]
-        self.base_url = httpx.URL("https://" + domain)
+        self.base_domain = response["domainName"]
+        self.base_url = httpx.URL("https://" + self.base_domain)
 
     def get(
             self,
@@ -64,7 +65,8 @@ class Client(httpx.Client):
             extensions: typing.Optional[RequestExtensions] = None,
     ) -> httpx.Response:
 
-        url, headers = self.__use_altsvc_cache(url, headers)
+        if self.alt_svc_support:
+            url, headers = self.__use_altsvc_cache(url, headers)
 
         response = self.request(
             "GET",
@@ -78,8 +80,8 @@ class Client(httpx.Client):
             extensions=extensions,
         )
 
-        # print("RESPONSE.URL.HOST", response.url.host)
-        self.__update_alt_svc_cache(response)
+        if self.alt_svc_support:
+            self.__update_alt_svc_cache(response)
 
         if response.status_code in [301, 302, 307, 308]:
             new_url = response.headers["Location"]
@@ -113,7 +115,8 @@ class Client(httpx.Client):
             extensions: typing.Optional[RequestExtensions] = None,
     ) -> httpx.Response:
 
-        url, headers = self.__use_altsvc_cache(url, headers)
+        if self.alt_svc_support:
+            url, headers = self.__use_altsvc_cache(url, headers)
 
         response = self.request(
             "POST",
@@ -131,7 +134,8 @@ class Client(httpx.Client):
             extensions=extensions,
         )
 
-        self.__update_alt_svc_cache(response)
+        if self.alt_svc_support:
+            self.__update_alt_svc_cache(response)
 
         if response.status_code in [301, 302, 307, 308]:
             new_url = response.headers["Location"]
@@ -267,3 +271,6 @@ class Client(httpx.Client):
 
     def get_username(self):
         return self.login_data["username"]
+
+    def get_base_domain(self):
+        return self.base_domain

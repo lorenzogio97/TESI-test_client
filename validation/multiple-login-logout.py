@@ -13,7 +13,7 @@ error = 0
 
 for i in range(20):
 
-    s = edge_http.Client("https://compute.lorenzogiorgi.com/orchestrator/login", "lorenzo", "lorenzo", verify=True,
+    s = edge_http.Client("https://compute.lorenzogiorgi.com/orchestrator/login", "lorenzo", "lorenzo", True, verify=True,
                          http2=True, timeout=None, limits=limits)
     print("RUN: ", i)
     for i in range(10):

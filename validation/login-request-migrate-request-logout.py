@@ -7,7 +7,7 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')
 import edge_http
 
 limits = httpx.Limits(max_keepalive_connections=None, max_connections=None, keepalive_expiry=None)
-s = edge_http.Client("https://compute.lorenzogiorgi.com/orchestrator/login", "lorenzo", "lorenzo", verify=True,
+s = edge_http.Client("https://compute.lorenzogiorgi.com/orchestrator/login", "lorenzo", "lorenzo", True, verify=True,
                      http2=True, timeout=None, limits=limits)
 
 for i in range(1, 10):
