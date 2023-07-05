@@ -29,6 +29,7 @@ edge_ip_mapping = {
 def make_request(quantity: int, interval: float):
     global request_no, request_time_series
     for _ in range(quantity):
+        t_start = time.time_ns()
         print()
         print()
         print("Request #", request_no)
@@ -40,13 +41,15 @@ def make_request(quantity: int, interval: float):
 
         print(r.http_version)
         print("SC:", r.status_code)
-
         print("Time used (ms)", (t1 - t0) / 1000000)
+
         request_no = request_no + 1
         request_edge_series.append(edge_id)
         request_response_code_series.append(r.status_code)
         request_time_series.append((t1 - t0) / 1000000)
-        time.sleep(interval)
+
+        t_end = time.time_ns()
+        time.sleep(interval - (t_end - t_start) / 1000000000)
 
 
 def change_access_point():
@@ -115,8 +118,8 @@ for item in edge_ip_mapping.values():
 # time start experiment
 start_time = time.time_ns()
 
-for i in range(20):
-    make_request(60 * 8, 0.5)
+for i in range(int(80 / handover_time_interval)):
+    make_request(60 * 2 * handover_time_interval, 0.5)
 
     if i == 0:
         first_edge = s.get_current_edge()
