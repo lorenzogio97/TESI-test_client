@@ -50,18 +50,40 @@ def make_request(quantity: int, interval: float):
 
 
 def change_access_point():
-    global first_edge
+    global first_edge, migration_number
     # migration request
-    edge_node_list = ["edge1", "edge2", "edge3"]
-    random.shuffle(edge_node_list)
-    if edge_node_list[0] != first_edge:
-        os.system("sudo tc filter del dev ens3 parent 1: protocol ip prio 1")
+    #edge_node_list = ["edge1", "edge2", "edge3"]
+    #random.shuffle(edge_node_list)
+    migration_number = migration_number + 1
+
+    if migration_number % 2 != 0:
+        #os.system("sudo tc filter del dev ens3 parent 1: protocol ip prio 1")
         ip = edge_ip_mapping.get(first_edge)
-        os.system("sudo tc filter add dev ens3 parent 1: protocol ip prio 1 u32 match ip dst " + str(ip) + "/32 flowid 1:1")
+        os.system("sudo tc filter add dev ens3 parent 1: protocol ip prio 1 u32 match ip dst " + str(ip) + "/32 flowid 1:2")
     else:
         os.system("sudo tc filter del dev ens3 parent 1: protocol ip prio 1")
 
 
+
+# parsing parameters
+if len(sys.argv) != 4:
+    print("you have to run: python3 script.py <handover_time_interval in min> <old_rtt_time> <run_index>")
+    exit(1)
+
+handover_time_interval = int(sys.argv[1])  # in minute
+rtt_old_node = int(sys.argv[2])  # in ms
+run_index = int(sys.argv[3])
+
+print("Parsed arguments:")
+print("Handover time(in minute): ", handover_time_interval)
+print("RTT on old node (in ms): ", rtt_old_node)
+print("Run Index: ", run_index)
+
+print("Experiment will start in 20 seconds")
+time.sleep(20)
+
+#migration number (on odd number long delay)
+migration_number = 0
 # request number counter
 request_no = 0
 # service time
@@ -80,8 +102,15 @@ s = edge_http.Client("https://compute.lorenzogiorgi.com/orchestrator/login", "lo
 os.system("sudo tc qdisc delete dev ens3 root")
 # qdisc prio creation
 os.system("sudo tc qdisc add dev ens3 root handle 1: prio priomap 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2")
-# class 1 will be delayed
-os.system("sudo tc qdisc add dev ens3 parent 1:1 handle 10: netem delay 25ms")
+# class 1 represent connection to optimal edge (7ms RTT)
+os.system("sudo tc qdisc add dev ens3 parent 1:1 handle 10: netem delay 7ms 1ms")
+# class 2 represent connection to the previous edge (122ms RTT)
+os.system("sudo tc qdisc add dev ens3 parent 1:2 handle 20: netem delay "+str(rtt_old_node)+"ms 1ms")
+
+# at the beginning, since it is not possible to know which edge will be selected, we apply the standard delay to all
+for item in edge_ip_mapping.values():
+    os.system("sudo tc filter add dev ens3 parent 1: protocol ip prio 2 u32 match ip dst " + str(
+        item) + "/32 flowid 1:1")
 
 # time start experiment
 start_time = time.time_ns()
@@ -94,6 +123,9 @@ for i in range(20):
 
     x = threading.Thread(target=change_access_point)
     x.start()
+
+
+s.logout("/orchestrator/logout")
 
 # collecting and saving result
 data = {
