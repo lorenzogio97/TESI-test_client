@@ -13,8 +13,8 @@ import edge_http
 """
 Description:
 Long run test for single client connected to service
-4 minutes on each access point
-20 migration
+5 or 20 minutes on each access point
+16-4 migrations
 
 Total experiment duration: 80 minutes
 """
