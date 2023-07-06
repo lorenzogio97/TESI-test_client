@@ -130,6 +130,8 @@ for i in range(int(80 / handover_time_interval)):
     x = threading.Thread(target=change_access_point)
     x.start()
 
+s.logout("/orchestrator/logout")
+
 # collecting and saving result
 data = {
     "request_time": request_time_series,
