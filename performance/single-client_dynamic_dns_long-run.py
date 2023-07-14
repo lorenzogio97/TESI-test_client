@@ -50,7 +50,8 @@ def make_request(quantity: int, interval: float):
         request_time_series.append((t1 - t0) / 1000000)
 
         t_end = time.time_ns()
-        time.sleep(interval - (t_end - t_start) / 1000000000)
+        if interval - (t_end - t_start) / 1000000000 > 0:
+            time.sleep(interval - (t_end - t_start) / 1000000000)
 
 
 def change_access_point():

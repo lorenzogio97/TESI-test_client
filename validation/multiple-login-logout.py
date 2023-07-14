@@ -11,12 +11,12 @@ limits = httpx.Limits(max_keepalive_connections=None, max_connections=None, keep
 # counter to keep unsuccessful requests (status different to 200)
 error = 0
 
-for i in range(20):
+for i in range(10000):
 
     s = edge_http.Client("https://compute.lorenzogiorgi.com/orchestrator/login", "lorenzo", "lorenzo", True, verify=True,
                          http2=True, timeout=None, limits=limits)
     print("RUN: ", i)
-    for i in range(10):
+    for i in range(12):
         print()
         print("Request #" + str(i))
         t0 = time.time_ns()
@@ -30,6 +30,7 @@ for i in range(20):
             time.sleep(1)
 
         print("Time used (ms)", (t1 - t0) / 1000000)
+        time.sleep(1)
 
     s.logout("/orchestrator/logout")
     s.close()
