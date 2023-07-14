@@ -30,7 +30,7 @@ workaround to get resolved IP by DNS : https://stackoverflow.com/questions/44374
 prv_getaddrinfo = socket.getaddrinfo
 def new_getaddrinfo(*args):
     # Uncomment to see what calls to `getaddrinfo` look like.
-    # print(args)
+    print(args)
     addr = prv_getaddrinfo(*args)
     print(addr)
     return addr
