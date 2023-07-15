@@ -10,7 +10,7 @@ plt.scatter(number, response_time)
 plt.title("Login-Request-Logout")
 
 plt.xlabel("Request number")
-plt.ylabel("Response time")
+plt.ylabel("Response time (ms)")
 
 plt.xticks(number)
 

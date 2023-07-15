@@ -22,7 +22,7 @@ plt.scatter(number, response_time, c=edge_color)
 plt.title("Login-Request-Migrate-Request-Logout")
 
 plt.xlabel("Request number")
-plt.ylabel("Response time")
+plt.ylabel("Response time (ms)")
 
 plt.xticks(number)
 # only one line may be specified; full height
