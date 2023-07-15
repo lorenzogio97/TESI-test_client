@@ -21,6 +21,9 @@ plt.plot(dns1_ecdf.x, dns1_ecdf.y, label="DNS TTL 1s")
 plt.plot(dns60_ecdf.x, dns60_ecdf.y, label="DNS TTL 60s")
 plt.title("Static migration")
 
+plt.xlabel("Response time (ms)")
+plt.ylabel("Probability")
+
 plt.legend()
 plt.savefig("./img_plot/performance-static_migration-ecdf.svg", format="svg")
 plt.show()
