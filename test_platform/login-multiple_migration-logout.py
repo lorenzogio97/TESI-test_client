@@ -12,11 +12,10 @@ n_migration = 10
 limits = httpx.Limits(max_keepalive_connections=None, max_connections=None, keepalive_expiry=None)
 s = edge_http.Client("https://compute.lorenzogiorgi.com/orchestrator/login", "lorenzo", "lorenzo", True, verify=True,
                      http2=True, timeout=None, limits=limits)
-
+request_n = 0
 for j in range(n_migration):
     for i in range(10):
         t_start = time.time_ns()
-        request_n = 0
         print()
         print()
         print("Request #", request_n)
