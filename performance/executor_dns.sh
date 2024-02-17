@@ -1,15 +1,15 @@
 #!/bin/bash
 
-for dns_ttl in 1 60
+for dns_ttl in 20 40
 do
-  for rtt in 7
+  for rtt in 122 26
   do
-    for inter_mig_time in 5
+    for inter_mig_time in 5 20
     do
       for run_id in 0 1
       do
         curl https://orchestrator.lorenzogiorgi.com/dns/$dns_ttl
-        sudo -E python3 single-client_static_dns_long-run.py $inter_mig_time $rtt $run_id $dns_ttl
+        sudo -E python3 single-client_dynamic_dns_long-run.py $inter_mig_time $rtt $run_id $dns_ttl
         sleep 60
       done
     done

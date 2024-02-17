@@ -1,5 +1,4 @@
 import pandas as pd
-
-values = pd.read_csv("./result/static-no_migration-5-7-1.csv").loc[:, "request_time"]
-
-print(values.mean())
+for run in range(2):
+    values = pd.read_csv("./result-preAllocated/dynamic-alt_svc-20-122-"+str(run)+".csv").loc[:, "request_time"]
+    print(values.mean())
