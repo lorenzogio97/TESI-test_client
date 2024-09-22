@@ -97,6 +97,8 @@ print("DNS TTL: ", dns_ttl)
 print("Experiment will start in 20 seconds")
 time.sleep(20)
 
+optimal_rtt = 26
+
 # request number counter
 request_no = 0
 # data lists for performance evaluation
@@ -114,7 +116,7 @@ os.system("sudo tc qdisc delete dev ens3 root")
 # qdisc prio creation
 os.system("sudo tc qdisc add dev ens3 root handle 1: prio priomap 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2")
 # class 1 represent connection to optimal edge (7ms RTT)
-os.system("sudo tc qdisc add dev ens3 parent 1:1 handle 10: netem delay 7ms 1ms")
+os.system("sudo tc qdisc add dev ens3 parent 1:1 handle 10: netem delay "+str(optimal_rtt)+"ms 1ms")
 # class 2 represent connection to the previous edge (122ms RTT)
 os.system("sudo tc qdisc add dev ens3 parent 1:2 handle 20: netem delay "+str(rtt_old_node)+"ms 1ms")
 

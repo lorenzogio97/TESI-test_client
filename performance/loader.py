@@ -16,12 +16,14 @@ def login(i: int):
 
 
 thread_list = []
-for i in range(0, 50):
+for i in range(0, 3*999):
     x = threading.Thread(target=login, args=(i,))
     x.start()
+    time.sleep(0.05)
     thread_list.append(x)
 for elem in thread_list:
     elem.join()
+    exit(0)
 
 thread_list = []
 for i in range(50, 100):

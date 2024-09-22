@@ -7,14 +7,14 @@ import httpx
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 import edge_http
 
-n_migration = 10
+n_migration = 240
 
 limits = httpx.Limits(max_keepalive_connections=None, max_connections=None, keepalive_expiry=None)
 s = edge_http.Client("https://compute.lorenzogiorgi.com/orchestrator/login", "lorenzo", "lorenzo", True, verify=True,
                      http2=True, timeout=None, limits=limits)
 request_n = 0
 for j in range(n_migration):
-    for i in range(10):
+    for i in range(0):
         t_start = time.time_ns()
         print()
         print()
@@ -35,6 +35,7 @@ for j in range(n_migration):
         time.sleep(0.5 - (t_end - t_start) / 1000000000)
 
     # trigger migration
+    time.sleep(2)
     s.migrate_on_different_edge("https://orchestrator.lorenzogiorgi.com/migrate")
 
 s.logout("/orchestrator/logout")

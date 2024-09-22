@@ -1,8 +1,8 @@
 #!/bin/bash
 
-for dns_ttl in 20 40
+for dns_ttl in 60
 do
-  for rtt in 122 26
+  for rtt in 122
   do
     for inter_mig_time in 5 20
     do
